@@ -5,10 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tiglle</groupId>
-    <artifactId>tiglle-jwt</artifactId>
+    <artifactId>tiglle-auth</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
+
+    <modules>
+        <module>tiglle-jwt-auth</module>
+    </modules>
 
     <dependencyManagement>
         <!--spring boot 2.2.2-->
@@ -39,6 +43,8 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!--========================以下依赖使用一种即可=======================-->
             <!--JWT(Json Web Token)登录支持 类型1-->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>

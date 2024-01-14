@@ -1,23 +1,22 @@
-package com.tiglle.tigllejwtauth.controller;
+package com.tiglle.tigllejwtauth.controller_对称加密;
 
 
-import cn.hutool.core.date.DateUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import io.jsonwebtoken.JwsHeader;
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.HashMap;
 
+//com.auth0.java-jwt  依赖类型的jwt
 @Controller
-public class LoginController2 {
+public class LoginController2_java_jwt {
 
     @Value("${tiglle.username:xiaoming}")
     private String username;
@@ -36,31 +35,21 @@ public class LoginController2 {
         }
         String userid = "123456";
         String merchantId = "QC";
-        Date date = new Date();
-        String token = JWT.create()
-                .withAudience(userid)
-                .withAudience("userid", userid)
-                .withAudience("merchantId", merchantId)
-                .withIssuedAt(date).withExpiresAt(DateUtil.offsetMinute(date, 5))
+        // 过期时间，60s
+        Calendar expires = Calendar.getInstance();
+        expires.add(Calendar.SECOND, 600);
+        HashMap<String, Object> headers = new HashMap();
+        String jwtToken = JWT.create()
+                // 第一部分Header
+                .withHeader(headers)
+                // 第二部分Payload
+                .withClaim("userId", 20)
+                .withClaim("userName", "LJJ")
+                .withExpiresAt(expires.getTime())
+                // 第三部分Signature
                 .sign(Algorithm.HMAC256(secretKey));
-        return token;
+        return jwtToken;
     }
-
-//    public String login2(){
-//        JWT.create().withAudience(user.getId()).withIssuedAt(start).withExpiresAt(end)
-//                .sign(Algorithm.HMAC256(user.getPassword()));
-//    }
-//
-//
-//    // 验证 token
-//    JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).build();
-//                try {
-//        jwtVerifier.verify(token);
-//<dependency>
-//            <groupId>com.auth0</groupId>
-//            <artifactId>java-jwt</artifactId>
-//            <version>3.18.3</version>
-//        </dependency>
 
     //验证token
     @GetMapping("auth2")
@@ -69,7 +58,11 @@ public class LoginController2 {
         // 验证 token
         JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
         try {
-            jwtVerifier.verify(token);
+            jwtVerifier.verify(token);//只验证，不获取数据，可以只用这个
+            DecodedJWT decodedJWT = jwtVerifier.verify(token);
+            Integer userId = decodedJWT.getClaim("userId").asInt();
+            String userName = decodedJWT.getClaim("userName").asString();
+            System.out.println(userId+":"+userName);
         } catch (JWTVerificationException e) {
             return "请登录";
         }

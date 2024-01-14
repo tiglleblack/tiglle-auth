@@ -1,0 +1,15 @@
+包：com.tiglle.tigllejwtauth.controller_对称加密
+    1.com.tiglle.tigllejwtauth.controller_对称加密.LoginController2_java_jwt
+    类中是对称加密，使用java-jwt依赖的jwt测试控制器
+    2.com.tiglle.tigllejwtauth.controller_对称加密.LoginController_jjwt_SHA
+    类中是对称加密，使用jjwt依赖的jwt测试控制器
+
+包：com.tiglle.tigllejwtauth.controller_非对称加密
+    1.com.tiglle.tigllejwtauth.controller_非对称加密.KeyGeneratorMain
+    类是生存公钥和私钥的类，并保存再文件中
+    2.com.tiglle.tigllejwtauth.controller_非对称加密.LoginController_jjwt_RSA
+    类中是非对称加密，使用jjwt依赖的jwt测试控制器，私钥加密，公钥解密
+
+访问方式：
+    1.加密访问(获取token)：http://localhost:8080/login[1-3]?username=xiaoming&password=xiaoming
+    2.解密访问(验证token，并获取token中的信息):http://localhost:8080/auth1[1-3]?token=上面第一步获取的token

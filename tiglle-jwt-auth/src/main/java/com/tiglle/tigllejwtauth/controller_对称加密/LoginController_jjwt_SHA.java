@@ -1,4 +1,4 @@
-package com.tiglle.tigllejwtauth.controller;
+package com.tiglle.tigllejwtauth.controller_对称加密;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * io.jsonwebtoken.jjwt 依赖类型的jwt
  */
 @Controller
-public class LoginController {
+public class LoginController_jjwt_SHA {
 
     @Value("${tiglle.username:xiaoming}")
     private String username;
@@ -50,27 +51,13 @@ public class LoginController {
         String token = Jwts.builder()
                 .setHeader(header)// 设置Header
                 .setClaims(payload) // 设置载核
-                .setExpiration(expiredTime)// 设置生效时间
-                .signWith(SignatureAlgorithm.HS256,secretKey) // 签名,这里采用私钥进行签名,不要泄露了自己的私钥信息
+                .setExpiration(expiredTime)// 设置过期时间
+                .setIssuedAt(new Date())//设置签发时间(token生成的时间)
+                .signWith(SignatureAlgorithm.HS256, secretKey) // 签名,这里采用私钥进行签名,不要泄露了自己的私钥信息
+                .setId(UUID.randomUUID().toString())//是JWT的唯一标识，根据业务需要，这个可以设置为一个不重复的值，主要用来作为一次性token,从而回避重放攻击
                 .compact(); // 压缩生成xxx.xxx.xxx
         return token;
     }
-
-//    public String login2(){
-//        JWT.create().withAudience(user.getId()).withIssuedAt(start).withExpiresAt(end)
-//                .sign(Algorithm.HMAC256(user.getPassword()));
-//    }
-//
-//
-//    // 验证 token
-//    JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).build();
-//                try {
-//        jwtVerifier.verify(token);
-//<dependency>
-//            <groupId>com.auth0</groupId>
-//            <artifactId>java-jwt</artifactId>
-//            <version>3.18.3</version>
-//        </dependency>
 
     //验证token
     @GetMapping("auth1")
