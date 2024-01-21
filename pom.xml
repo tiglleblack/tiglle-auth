@@ -11,7 +11,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>tiglle-jwt-auth</module>
+        <module>tiglle-jwt</module>
+        <module>tiglle-spring-security</module>
     </modules>
 
     <dependencyManagement>
@@ -20,7 +21,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.2.2.RELEASE</version>
+                <version>3.0.12</version>
                 <!--相当于引入spring-boot-dependencies的pom中的dependencyManagement模块-->
                 <!--当然直接引入-->
                 <type>pom</type>
@@ -30,7 +31,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Hoxton.SR1</version>
+                <version>2022.0.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -39,7 +40,7 @@
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>2.1.0.RELEASE</version>
+                <version>2022.0.0.0-RC2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

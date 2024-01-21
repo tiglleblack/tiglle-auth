@@ -1,0 +1,36 @@
+第一步：访问
+    不添加spring-boot-starter-security的时候，访问控制器：http://localhost:8080/hello，可以随便访问
+
+第二步：添加SpringSecurity依赖
+    1.添加spring-boot-starter-security之后，什么都不做，启动的时候，控制台提示：
+        Using generated security password: 3ae5a6fb-c108-403c-ace2-63273408c5b3
+
+        This generated password is for development use only. Your security configuration must be updated before running your application in production.
+    2.再次访问控制器：http://localhost:8080/hello，出现登录页面，使用账密：user,1029d33d-f87f-412d-bb4f-0da8ebaca8a8登录后成功访问
+
+第三步：DelegatingFilterProxy原理
+    1.原理：DelegatingFilterProxy：
+        SpringSecurity使用servlet的Filter实现，SpringSecurity有很多Filter，其中之一就是：
+        DelegatingFilterProxy：Servle容器和Spring工厂之间的桥梁，如果想在Servlet的Filter中使用SpringSecurity的Filter,那么DelegatingFilterProxy就必须再Servlet的Filter中出现，然后通过DelegatingFilterProxy把SSC的Filter注入到Servlet的Filter中
+    2.DelegatingFilterProxy的结构：
+        DelegatingFilterProxy 类继承于抽象类 GenericFilterBean 间接 implements 了javax.servlet.Filter 接口。所以，DelegatingFilterProxy本质就是一个过滤器，本质上和FilterChain中的Filter没有任何区别。
+        原生的Filter运行在Servlet容器里边也就是Tomcat容器当中，而Spring的所书写的过滤器属于Spring工厂。Spring工厂中的过滤器是没有办法在容器层拦截Http请求并进行干预的，但是原生Filter就可以做到直接在容器层拦截Http请求并进行干预，就比如DelegatingFilterProxy(implements 了javax.servlet.Filter 接口,所以也是一个容器层过滤器)，所以借助它，Spring当中的Filter就可以过滤和干预Http请求了。
+    3.DelegatingFilterProxy需要借助于FilterChainProxy类将请求转给Spring中的Bean Filter进行处理。
+    4.示意图：https://img-blog.csdnimg.cn/799997bbd3514ccabf0428aa4e8b7553.png
+
+注意1：注意：一个项目可能不止一个Filter，多个Filter形成FilterChain，所以也可以说是DelegatingFilterProxy搭建起来了Servler的Filter Chain和Spring Security的FilterChain之间的桥梁。后续重点说FilterChain
+
+第四步：FilterChainProxy原理
+    1.FilterChainProxy的结构
+         FilterChainProxy 类继承于抽象类 GenericFilterBean 间接 implements 了javax.servlet.Filter 接口。所以，FilterChainProxy本质就也是一个Servlet的Filter，本质上和FilterChain中的Filter没有任何区别。
+    2.作用1：
+        FilterChainProxy实现把请求传递给一或多个 SecurityFilterChain 实例进行认证或授权等，并在需要时重定向或返回错误信息。每一个SecurityFilterChain中包含一个或者多个SecurityFilter。
+        示意图：https://img-blog.csdnimg.cn/b2fd84c8cde54da6807e47863db86e15.png
+第五步：SecurityFilterChain原理
+    1.作用
+        SecurityFilterChain和 Servlet 中的 FilterChain 一样，同样维护了很多 Filter，这些 Filter 由SpringSecurity 提供，每个 Filter 具有不同的职能
+        Spring Security支持添加1或多个 SecurityFilterChain，每个SecurityFilterChain负责不同的请求(比如依据请求地址进行区分) ，这样可以为不同的请求设置不同的认证规则。
+        示意图：https://img-blog.csdnimg.cn/7126aef2685c456ab9ed591c33b69f1f.png
+    2.流程：
+        FilterChainProxy 是顶层管理者，统一管理 Security Filter和 SecurityFllterChain过涉器链
+        当请求到达 FilterChainProxy 时，会根据当前请求匹配SecurityFilterChain，然后将请求依次转发给 SecurityFilterChain 中的 Security Filter
