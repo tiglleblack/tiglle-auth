@@ -237,5 +237,9 @@ org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyAutoConfi
 
 可以看到SecurityFilterChain拦截了所有的请求，所以 第二步 引入以来后所有请求都需要登录
 
-##### TODO:第六篇最后一点默认认证方式的条件，要不要看
+##### TODO:1.全部重写，这个文件只写连接的处理过程
+##### TODO:2.SpringSecurity源码解析的笔记转移
+##### TODO:3.DeletatingFilterProxy的初始化过程
+##### TODO:4.FilterChainProxy是如何装配到DeletatingFilterProxy
+
 
