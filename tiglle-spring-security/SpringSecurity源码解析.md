@@ -219,9 +219,7 @@ private final List<Filter> filters;
 
 至此SSC的默认15个核心过滤器和其组成的过滤链DefaultSecurityFilterChain初始化完成
 
-### 四.DelegatingFilterProxy的初始化+如何关联SpringSecurityFilterChain
-
-##### 1.DelegatingFilterProxy的初始化
+### 四.DelegatingFilterProxy的初始化
 
 1.springboot启动时，会进行自动装配(详见:*面试笔记/5-springboot/2.spring boot自动装配流程.md*)，新版会扫描classpath下的文件：
 
@@ -263,7 +261,7 @@ public class SecurityFilterAutoConfiguration {
 
 创建DelegatingFilterProxy对象之后，后续代码将DelegatingFilterProxy对象加入到servlet容器的filterchain过滤链中，在请求提交上来之后，通过DelegatingFilterProxy来实现Spring Security的安全功能。
 
-##### 2.如何关联SpringSecurityFilterChain
+### 五.FilterChainProxy如何装配到DelegatingFilterProxy中
 
 3.我们来看DelegatingFilterProxyRegistrationBean，先看看他的类关系结构
 
@@ -336,4 +334,154 @@ RegistrationBean.onStartup-->  //DelegatingFilterProxyRegistrationBean的父类�
 
 返回DelegatingFilterProxy类，并且参数为this.targetBeanName，this.targetBeanName的值为"springSecurityFilterChain"
 
-至此关联上
+这里把DelegatingFilterProxy的
+
+```
+private String targetBeanName;
+```
+
+属性设置为"springSecurityFilterChain"
+
+这是DelegatingFilterProxy与SpringSecurityFilterChain的关系，我们再来看DelegatingFilterProxy与FilterChainProxy的关系
+
+DelegatingFilterProxy中的doFilter方法，最终调用了initDelegate方法：
+
+DelegatingFilterProxy.doFilter-->
+
+​		DelegatingFilterProxy.initDelegate:
+
+```
+    protected Filter initDelegate(WebApplicationContext wac) throws ServletException {
+        String targetBeanName = this.getTargetBeanName();
+        Assert.state(targetBeanName != null, "No target bean name set");
+        Filter delegate = (Filter)wac.getBean(targetBeanName, Filter.class);
+        if (this.isTargetFilterLifecycle()) {
+            delegate.init(this.getFilterConfig());
+        }
+        return delegate;
+    }
+```
+
+String targetBeanName = this.getTargetBeanName();获取的时上面说的"springSecurityFilterChain"的值，然后根据此值从spring容器中获取bean
+
+此bean就是FilterChainProxy，为什么呢，看下一章：DefaultSecurityFilterChain如何装配到FilterChainProxy中
+
+这一篇说的比较模糊，当然也不用看那么仔细，根本用不到
+
+### 六.DefaultSecurityFilterChain如何装配到FilterChainProxy中
+
+1.springboot启动时，会进行自动装配(详见:*面试笔记/5-springboot/2.spring boot自动装配流程.md*)，新版会扫描classpath下的文件：
+
+```
+classpath:/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+```
+
+然后加载此文件中的所有自动装配类，其中包含：
+
+```
+org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+```
+
+2.SecurityAutoConfiguration使用@Import注解引入了两个类：
+
+```java
+@Import({ SpringBootWebSecurityConfiguration.class, SecurityDataConfiguration.class })
+```
+
+3.关键在于SpringBootWebSecurityConfiguration.class这个类
+
+SpringBootWebSecurityConfiguration有两个静态内部类
+
+①SecurityFilterChainConfiguration：会初始化SSC的默认过滤链DefaultSecurityFilterChain到Spring容器(后面讲)
+
+②WebSecurityEnablerConfiguration：初始化15个核心默认过滤器，并交给默认过滤链DefaultSecurityFilterChain
+
+我们来看SpringBootWebSecurityConfiguration这个类，其使用@EnableWebSecurity注解修饰，并且是个空类
+
+```java
+	@Configuration(proxyBeanMethods = false)
+	@ConditionalOnMissingBean(name = BeanIds.SPRING_SECURITY_FILTER_CHAIN)
+	@ConditionalOnClass(EnableWebSecurity.class)
+	@EnableWebSecurity
+	static class WebSecurityEnablerConfiguration {
+	}
+```
+
+4.@EnableWebSecurity注解也是用了@Import注解，导入了4个类
+
+```java
+@Import({ WebSecurityConfiguration.class, SpringWebMvcImportSelector.class, OAuth2ImportSelector.class,
+		HttpSecurityConfiguration.class })
+```
+
+5.关键在于第一个类：WebSecurityConfiguration
+
+此类使用@Configuration+@Autowired的方式，使用set注入方式向WebSecurityConfiguration.securityFilterChains属性注入值
+
+```
+@Configuration(proxyBeanMethods = false)
+public class WebSecurityConfiguration implements ImportAware, BeanClassLoaderAware {
+	private List<SecurityFilterChain> securityFilterChains = Collections.emptyList();
+	
+	@Autowired(required = false)
+	void setFilterChains(List<SecurityFilterChain> securityFilterChains) {
+		this.securityFilterChains = securityFilterChains;
+	}
+}
+```
+
+@Autowired的set注入方式，把参数List<SecurityFilterChain> securityFilterChains注入到this.securityFilterChains中
+
+因此这个参数的值是需要从Spring容器中获取。
+
+前面讲了SSC的默认SecurityFilterChain的初始化，为DefaultSecurityFilterChain，因此这里注入的就是DefaultSecurityFilterChain(Emmmmmmm)
+
+6.然后看WebSecurityConfiguration.springSecurityFilterChain方法：方法中调用了别的方法，调用链：
+
+WebSecurityConfiguration.springSecurityFilterChain-->
+
+​		AbstractSecurityBuilder.build-->
+
+​				AbstractConfiguredSecurityBuilder.doBuild-->
+
+​						WebSecurity.performBuild:
+
+其中有个for循环
+
+```java
+		for (SecurityBuilder<? extends SecurityFilterChain> securityFilterChainBuilder : this.securityFilterChainBuilders) {
+			//重要的是这句securityFilterChainBuilder.build()返回的就是DefaultSecurityFilterChain
+			SecurityFilterChain securityFilterChain = securityFilterChainBuilder.build();
+			
+			//然后把DefaultSecurityFilterChain放入securityFilterChains中
+			securityFilterChains.add(securityFilterChain);
+			
+			requestMatcherPrivilegeEvaluatorsEntries
+				.add(getRequestMatcherPrivilegeEvaluatorsEntry(securityFilterChain));
+		}
+		if (this.privilegeEvaluator == null) {
+			this.privilegeEvaluator = new RequestMatcherDelegatingWebInvocationPrivilegeEvaluator(
+					requestMatcherPrivilegeEvaluatorsEntries);
+		}
+		
+		//最后把securityFilterChains交给FilterChainProxy
+		FilterChainProxy filterChainProxy = new FilterChainProxy(securityFilterChains);
+		return result;
+```
+
+看注释，至此DefaultSecurityFilterChain注入到了FilterChainProxy中，并把FilterChainProxy对象返回到springSecurityFilterChain方法，然后使用@Bean的方式注入到spring容器：
+
+```java
+@Bean(name = AbstractSecurityWebApplicationInitializer.DEFAULT_FILTER_NAME)
+public Filter springSecurityFilterChain() throws Exception {
+    ....................
+    return this.webSecurity.build();//返回值为FilterChainProxy
+}
+```
+
+至此SecurityFilterChain注入到了FilterChainProxy中
+
+
+
+
+
