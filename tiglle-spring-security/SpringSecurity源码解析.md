@@ -481,7 +481,9 @@ public Filter springSecurityFilterChain() throws Exception {
 
 至此SecurityFilterChain注入到了FilterChainProxy中
 
+### 七.SpringSecurity的请求处理流程TODO
 
+1.登录页面的返回
 
 
 
