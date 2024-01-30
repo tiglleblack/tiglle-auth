@@ -1,5 +1,9 @@
 #            SpringSecurity源码解析
 
+## 总流程图：
+
+![](https://raw.githubusercontent.com/doocs/source-code-hunter/main/images/SpringSecurity/image-20210811091659121.png)
+
 ### 一.SpringSecurity的请求过滤流程图解
 
 ##### 1.Servlet的Filter的请求过滤
@@ -163,6 +167,70 @@ FilterOrderRegistration() {
 他将需要实例化的过滤器放入其类型未Map的私有属性中，key为此过滤器的Class类，value为int的值，应该是过滤器的Order排序，从上到下递增
 
 然后在后续启动中陆续把这些过滤器初始化并放入HttpSecurity.filters属性中，这个过程比较分散，源码不好找，因此：TODO
+
+15个核心Filter分别为：
+
+1：DisableEncoderUrlFilter
+
+​		禁止URL重新编码，默认程序启动就会加载。
+
+2：WebAsyncManagerIntegrationFilter
+
+​		将WebAsyncManager与SpringSecurity上下文进行集成。默认程序启动就会加载。
+
+​    	将web的异步处理管理器与SpringSecurity上下文进行集成      
+
+3：SecurityContextHolderFilter
+
+​        获取安全上下文，默认程序启动就会加载。
+
+4：HeaderWriterFilter
+
+​        处理头信息加入响应中，默认程序启动就会加载。
+
+5：CsrfFilter
+
+​        处理CSRF攻击，默认程序启动就会加载。
+
+6：LogoutFilter
+
+​        处理注销登录，默认程序启动就会加载。
+
+7：UsernamePasswordAuthenticationFilter
+
+​        处理表单登录，默认程序启动就会加载。
+
+8：DefaultLoginPageGeneratingFilter
+
+​        配置默认登录页面，默认程序启动就会加载。
+
+9：DefaultLogoutPageGeneratingFilter
+
+​        配置默认注销页面，默认程序启动就会加载。
+
+10：BasicAuthenticationFilter
+
+​        处理 HttpBasic登录，默认程序启动就会加载。
+
+11：RequestCacheAwareFilter
+
+​        处理请求缓存，默认程序启动就会加载。
+
+12：SecurityContextHolderAwareRequestFilter
+
+​        包装原始请求，默认程序启动就会加载。
+
+13：AnonymousAuthenticationFilter
+
+​        配置匿名认证，默认程序启动就会加载。
+
+14：ExceptionTranslationFilter
+
+​        处理认证/授权中的异常，默认程序启动就会加载。
+
+15：AuthorizationFilter
+
+​        处理当前用户是否有权限访问目标资源，默认程序启动就会加载。
 
 ### 三.SecurityFilterChain过滤链的初始化
 
@@ -480,6 +548,179 @@ public Filter springSecurityFilterChain() throws Exception {
 ```
 
 至此SecurityFilterChain注入到了FilterChainProxy中
+
+### 七.SpringSecurity的的Filter的工作过程
+
+1.请求会先到达DelegatingFilterProxy，然后递归调用15个SecurityFilter的doFilterInternal方法，调用链：
+
+DelegatingFilterProxy.doFilter-->
+
+ DelegatingFilterProxy.invokeDelegate-->
+
+  FilterChainProxy.doFilter-->
+
+   FilterChainProxy.doFilterInternal-->
+
+​    FilterChainProxy.VirtualFilterChain.doFilter-->
+
+FilterChainProxy.VirtualFilterChain的doFilter就是递归调用的方法:
+
+```java
+		@Override
+		public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+			.......
+            //nextFilter的值每次递归都是不同的Filter，15个SecurityFilter依次递归
+			nextFilter.doFilter(request, response, this);
+		}
+```
+
+这里分别调用15个Filter的doFilter方法，其中大部分都是继承自父类OncePerRequestFilter，所以调用父类的doFilter方法，在父类的doFilter方法中，调用子类重写的doFilterInternal方法，因此，会分别调用15个SecurityFilter的doFilterInternal方法
+
+### 七.登录页面的渲染过程
+
+#### 一.登录页面的渲染过程
+
+##### 1.有关的过滤器
+
+和四个SSC的过滤器有关
+
+1.UsernamePasswordAuthenticationFilter（处理表单登录）
+
+2.DefaultLoginPageGeneratingFilter(配置登录页面)
+
+3.ExceptionTranslationFilter（处理认证授权中的异常）
+
+4.AuthorizationFilter（对请求进行访问权限处理）
+![img](https://img-blog.csdnimg.cn/direct/77a33b5a8313436db154dbec6cdacef9.png)
+
+##### 2.http://localhost:800/hello请求的过程
+
+1.一路畅通，到达AuthorizationFilter后，检查发现用户未认证，请求被拦截，并抛出AccessDeniedException异常
+
+2.抛出的 AccessDeniedException 异常会被 ExceptionTranslationFilter 捕获并启动身份验证
+
+3.ExceptionTranslationFilter调用LoginUrlAuthenticationEntryPoint的commence 方法，要求重定向到login页面
+
+4.因此请求变成http://localhost:800/login，浏览器重新发送一次login请求
+
+5./login 请求会被过滤器 DefaultLoginPageGeneratingFilter 拦截，并在过滤器中返回默认的登录页面
+
+### 八.默认用户名和密码的生成过程
+
+##### 1.初始化用户名和密码
+
+1.springboot启动时，会进行自动装配(详见:*面试笔记/5-springboot/2.spring boot自动装配流程.md*)，新版会扫描classpath下的文件：
+
+```
+classpath:/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+```
+
+然后加载此文件中的所有自动装配类，其中包含：
+
+```
+org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+```
+
+2.SecurityAutoConfiguration使用@EnableConfigurationProperties将指定的Properties类注册为bean：SecurityProperties
+
+我们来看SecurityProperties
+
+```
+@ConfigurationProperties(prefix = "spring.security")
+public class SecurityProperties {
+	//默认用户，使用下面的静态内部类
+	private final User user = new User();
+	//静态内部类
+	public static class User {
+
+		private String name = "user";
+
+		private String password = UUID.randomUUID().toString();
+		//此用户的角色信息
+		private List<String> roles = new ArrayList<>();
+	}
+}
+```
+
+此Properties类使用@ConfigurationProperties指定配置类的前缀，并且拥有User对象，默认为静态内部类，静态内部内的name和password属性的默认值，就是SpringSecurity的默认默认用户名和密码，roles属性存放了用户的角色信息，默认为空集合。此时SecurityProperties的User类已经初始化并拥有值
+
+我们也可以通过在配置文件配置这三个属性的值，修改默认用户名和密码，添加角色
+
+```
+spring.security.user.name=admin
+spring.security.user.password==Aa123456
+spring.security.user.roles=superadmin,guest,manager
+```
+
+##### 2.讲初始化的用户名和密码放入缓存，后面认证的时候会从缓存中取
+
+1.还是springboot的自动装配 ,springboot启动时，会进行自动装配(详见:*面试笔记/5-springboot/2.spring boot自动装配流程.md*)，新版会扫描classpath下的文件：
+
+```
+classpath:/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+```
+
+然后加载此文件中的所有自动装配类，其中包含：
+
+```
+org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+```
+
+我们来看看UserDetailsServiceAutoConfiguration：
+
+```
+@AutoConfiguration
+....省略某注解........
+public class UserDetailsServiceAutoConfiguration {
+	....省略某属性........
+	@Bean
+	public InMemoryUserDetailsManager inMemoryUserDetailsManager(SecurityProperties properties,
+			ObjectProvider<PasswordEncoder> passwordEncoder) {
+		//从SecurityProperties中获取User信息
+		SecurityProperties.User user = properties.getUser();
+		//获取角色信息
+		List<String> roles = user.getRoles();
+		//1.将SecurityProperties中的user信息构建为UserDetails类型，并作为构造函数的参数
+		//2.向容器中注入默认的UserDetailsService类
+		return new InMemoryUserDetailsManager(User.withUsername(user.getName())
+			.password(getOrDeducePassword(user, passwordEncoder.getIfAvailable()))
+			.roles(StringUtils.toStringArray(roles))
+			.build());
+	}
+```
+
+可以看到使用@AutoConfiguration+@Bean的方式，向容器中注入了InMemoryUserDetailsManager，此类为UserDetailsService接口的是实现类，UserDetailsService很重要，SSC认证的时候需要通过他获取真实的用户信息，我们可以实现它来自定义真实用户的获取方式
+
+我们先来看看InMemoryUserDetailsManager这个类：
+
+```
+public class InMemoryUserDetailsManager implements UserDetailsManager, UserDetailsPasswordService {
+	//存放用户信息的缓存，后面认证用户的时候会从这个缓存中获取用户信息
+	private final Map<String, MutableUserDetails> users = new HashMap<>();
+	//此构造函数将用户放入上面的缓存，key为user的name的值
+	public InMemoryUserDetailsManager(UserDetails... users) {
+		for (UserDetails user : users) {
+			//将用户放入users缓存
+			createUser(user);
+		}
+	}
+	//被调用后将用户放入users缓存
+	@Override
+	public void createUser(UserDetails user) {
+		Assert.isTrue(!userExists(user.getUsername()), "user should not exist");
+		this.users.put(user.getUsername().toLowerCase(), new MutableUser(user));
+	}
+	
+}
+```
+
+InMemoryUserDetailsManager的构造函数接收UserDetails类型的参数，因此注入InMemoryUserDetailsManager时，会把从SecurityProperties构建为UserDetails然后传入构造函数，然后放入InMemoryUserDetailsManager的Map属性users的缓存中，key为UserDetails的username的值
+
+此缓存为Map，因此不止存放一个用户信息
+
+OK，此时SSC的默认用户信息已经放入缓存，key为username=admin
+
+##### 至于怎么从缓存获取然后验证的，我们看下一章：七.SpringSecurity的请求处理流程
 
 ### 七.SpringSecurity的请求处理流程TODO
 
