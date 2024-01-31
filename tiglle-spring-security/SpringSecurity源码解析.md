@@ -600,13 +600,15 @@ FilterChainProxy.VirtualFilterChain的doFilter就是递归调用的方法:
 
 1.一路畅通，到达AuthorizationFilter后，检查发现用户未认证，请求被拦截，并抛出AccessDeniedException异常
 
-2.抛出的 AccessDeniedException 异常会被 ExceptionTranslationFilter 捕获并启动身份验证
+2.抛出的 AccessDeniedException 异常会被 ExceptionTranslationFilter(AuthorizationFilter的上一次过滤器) 捕获并启动身份验证
 
 3.ExceptionTranslationFilter调用LoginUrlAuthenticationEntryPoint的commence 方法，要求重定向到login页面
 
 4.因此请求变成http://localhost:800/login，浏览器重新发送一次login请求
 
-5./login 请求会被过滤器 DefaultLoginPageGeneratingFilter 拦截，并在过滤器中返回默认的登录页面
+5./login 请求会被过滤器 DefaultLoginPageGeneratingFilter 拦截，判断如果是/login请求，会调用本类的generateLoginPageHtml方法，生产登录页面
+
+6.然后设置response的ContentType=text/html,使用response.getWriter().write(loginPageHtml)写入登录页面，然后return，不继续后续流程，直接返回
 
 ### 八.默认用户名和密码的生成过程
 
