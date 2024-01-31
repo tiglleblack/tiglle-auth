@@ -38,6 +38,71 @@ Spring Security 中最终对请求进行处理的就是某个 SecurityFilterChai
 
 ### 二.默认15个核心SecurityFilter的初始化流程
 
+##### 1.十五个核心Filter分别为：
+
+1：DisableEncoderUrlFilter
+
+​	禁止URL重新编码
+
+2：WebAsyncManagerIntegrationFilter
+
+​	将WebAsyncManager与SpringSecurity上下文进行集成
+
+​    	将web的异步处理管理器与SpringSecurity上下文进行集成      
+
+3：SecurityContextHolderFilter
+
+​        获取安全上下文
+
+4：HeaderWriterFilter
+
+​        处理头信息加入响应中
+
+5：CsrfFilter
+
+​        处理CSRF攻击
+
+6：LogoutFilter
+
+​        处理注销登录
+
+7：UsernamePasswordAuthenticationFilter
+
+​        处理表单登录
+
+8：DefaultLoginPageGeneratingFilter
+
+​        配置默认登录页面
+
+9：DefaultLogoutPageGeneratingFilter
+
+​        配置默认注销页面
+
+10：BasicAuthenticationFilter
+
+​        处理 HttpBasic登录
+
+11：RequestCacheAwareFilter
+
+​        处理请求缓存
+
+12：SecurityContextHolderAwareRequestFilter
+
+​        包装原始请求
+
+13：AnonymousAuthenticationFilter
+
+​        配置匿名认证
+
+14：ExceptionTranslationFilter
+
+​        处理认证/授权中的异常
+
+15：AuthorizationFilter
+
+​        处理当前用户是否有权限访问目标资源
+##### 2.初始化过程
+
 1.springboot启动时，会进行自动装配(详见:*面试笔记/5-springboot/2.spring boot自动装配流程.md*)，新版会扫描classpath下的文件：
 
 ```
@@ -168,69 +233,7 @@ FilterOrderRegistration() {
 
 然后在后续启动中陆续把这些过滤器初始化并放入HttpSecurity.filters属性中，这个过程比较分散，源码不好找，因此：TODO
 
-15个核心Filter分别为：
 
-1：DisableEncoderUrlFilter
-
-​		禁止URL重新编码，默认程序启动就会加载。
-
-2：WebAsyncManagerIntegrationFilter
-
-​		将WebAsyncManager与SpringSecurity上下文进行集成。默认程序启动就会加载。
-
-​    	将web的异步处理管理器与SpringSecurity上下文进行集成      
-
-3：SecurityContextHolderFilter
-
-​        获取安全上下文，默认程序启动就会加载。
-
-4：HeaderWriterFilter
-
-​        处理头信息加入响应中，默认程序启动就会加载。
-
-5：CsrfFilter
-
-​        处理CSRF攻击，默认程序启动就会加载。
-
-6：LogoutFilter
-
-​        处理注销登录，默认程序启动就会加载。
-
-7：UsernamePasswordAuthenticationFilter
-
-​        处理表单登录，默认程序启动就会加载。
-
-8：DefaultLoginPageGeneratingFilter
-
-​        配置默认登录页面，默认程序启动就会加载。
-
-9：DefaultLogoutPageGeneratingFilter
-
-​        配置默认注销页面，默认程序启动就会加载。
-
-10：BasicAuthenticationFilter
-
-​        处理 HttpBasic登录，默认程序启动就会加载。
-
-11：RequestCacheAwareFilter
-
-​        处理请求缓存，默认程序启动就会加载。
-
-12：SecurityContextHolderAwareRequestFilter
-
-​        包装原始请求，默认程序启动就会加载。
-
-13：AnonymousAuthenticationFilter
-
-​        配置匿名认证，默认程序启动就会加载。
-
-14：ExceptionTranslationFilter
-
-​        处理认证/授权中的异常，默认程序启动就会加载。
-
-15：AuthorizationFilter
-
-​        处理当前用户是否有权限访问目标资源，默认程序启动就会加载。
 
 ### 三.SecurityFilterChain过滤链的初始化
 
