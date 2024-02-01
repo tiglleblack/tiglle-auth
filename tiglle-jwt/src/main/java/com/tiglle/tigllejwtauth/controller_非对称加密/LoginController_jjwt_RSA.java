@@ -67,7 +67,7 @@ public class LoginController_jjwt_RSA {
         //生存JWT token
         // JWT头部分信息【Header】
         Map<String, Object> header = new HashMap();
-        header.put("alg", "HS256");
+        header.put("alg", "RS256");//这里应该跟下面的算法保持一致(应该是这样，之前是HS256)
         header.put("typ", "JWT");
         // 载核【Payload】
         Map<String, Object> payload = new HashMap();
