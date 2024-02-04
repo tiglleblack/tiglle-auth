@@ -14,6 +14,7 @@ public class KeyGeneratorMain {
         //生成密钥的密文
         String secret = "aabcdefg123456";
 
+        //如果JTWT是SignatureAlgorithm.HS512 加解密，公私钥的长度需要大于等于2048
         Integer keySize = 2048;
         String projectDir = System.getProperty("user.dir");
         String srcDir = projectDir+"/tiglle-jwt-auth/src/main/resources";

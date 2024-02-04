@@ -89,6 +89,7 @@ public class LoginController_jjwt_RSA {
                 .setExpiration(expiredTime)// 设置过期时间
                 .setIssuedAt(new Date())//设置签发时间(token生成的时间)
                 //使用私钥加密
+                //SignatureAlgorithm.HS512  如果是这个，公私钥的长度需要大于等于2048
                 .signWith(SignatureAlgorithm.RS256, privateKey) // 签名,这里采用私钥进行签名,不要泄露了自己的私钥信息
                 .setId(UUID.randomUUID().toString())//是JWT的唯一标识，根据业务需要，这个可以设置为一个不重复的值，主要用来作为一次性token,从而回避重放攻击
                 .compact(); // 压缩生成xxx.xxx.xxx
