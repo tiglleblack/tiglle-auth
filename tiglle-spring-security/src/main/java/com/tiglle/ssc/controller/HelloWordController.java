@@ -11,6 +11,11 @@ public class HelloWordController {
         return "hello word";
     }
 
+    //@RequestMapping("index")
+    public String index(){
+        return "index";
+    }
+
 
 
 }

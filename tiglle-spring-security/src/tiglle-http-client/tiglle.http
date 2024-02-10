@@ -1,0 +1,6 @@
+### Send POST request with json body
+POST http://localhost:8080/custom/login
+Content-Type: application/x-www-form-urlencoded
+
+user=user&
+pass=xiaoming

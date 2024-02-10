@@ -42,3 +42,10 @@ This generated password is for development use only. Your security configuration
 4.因此请求变成http://localhost:800/login，浏览器重新发送一次login请求
 
 5./login 请求会被过滤器 DefaultLoginPageGeneratingFilter 拦截，并在过滤器中返回默认的登录页面
+
+#### 四.自定义配置
+
+##### 1.自定义登录页面
+
+编写登录页面：src/main/resources/static/login.html
+
