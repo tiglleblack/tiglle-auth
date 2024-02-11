@@ -1,6 +1,14 @@
-### Send POST request with json body
+### 获取验证码
+POST http://localhost:8080/generateCaptcha
+Content-Type: application/x-www-form-urlencoded
+
+
+### 登录
 POST http://localhost:8080/custom/login
 Content-Type: application/x-www-form-urlencoded
 
 user=user&
-pass=xiaoming
+pass=xiaoming&
+id=0cd95945-9180-4c7c-bb9c-06ed8d2d1758&
+captcha=imlso
+
