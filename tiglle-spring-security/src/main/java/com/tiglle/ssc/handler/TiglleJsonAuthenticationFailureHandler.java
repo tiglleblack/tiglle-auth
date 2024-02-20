@@ -1,4 +1,4 @@
-package com.tiglle.ssc.config_前后分离;
+package com.tiglle.ssc.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

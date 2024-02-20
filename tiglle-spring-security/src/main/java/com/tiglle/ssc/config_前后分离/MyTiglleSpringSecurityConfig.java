@@ -1,6 +1,9 @@
 package com.tiglle.ssc.config_前后分离;
 
 import com.tiglle.ssc.filter.CaptchaVerifyFilter;
+import com.tiglle.ssc.handler.TiglleJsonAuthenticationFailureHandler;
+import com.tiglle.ssc.handler.TiglleJsonAuthenticationSuccessHandler;
+import com.tiglle.ssc.handler.TiglleJsonLogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 //6.0之前是继承WebSecurityConfigurerAdapter来完成
 //前后分离，页面前端写，前端发送 PSOT /登录url登录
@@ -40,9 +44,22 @@ public class MyTiglleSpringSecurityConfig {
         http.csrf().disable();
         //关闭注销登录功能,默认是开启的
         //http.logout().disable();
+
+/***************************注销登录****************************************************************/
         //自定义注销登录请求处理路径：SSC默认为/logout
         //https://yunyanchengyu.blog.csdn.net/article/details/129833839
-        http.logout().logoutUrl("/custom/logout");
+        http.logout()
+                .clearAuthentication(true) // 清理Authentication ，默认true
+                .deleteCookies("xxx", "yyy") // 删除某些指定 cookie
+                .invalidateHttpSession(true) // 设置当前登录用户Session无效（保存登录后的用户信息），默认true
+                // 自定义注销请求URL（和 logoutUrl配置只会生效一个）
+                .logoutRequestMatcher( new AntPathRequestMatcher("/aaa","GET"))
+                .logoutUrl("/custom/logout")// 自定义注销登录请求处理路径
+                //注销登录成功后的处理器（SSC默认注销登录成功后跳转到登录页面，前后分离由前端跳转指定页面，所有需要返回json）
+                .logoutSuccessHandler(new TiglleJsonLogoutSuccessHandler())
+                //.logoutSuccessUrl()注销登录成功后访问你的url
+        ;
+/***************************验证码****************************************************************/
         //配置验证码校验过滤器再UsernamePasswordAuthenticationFilter的前面
         http.addFilterBefore(new CaptchaVerifyFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

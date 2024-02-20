@@ -28,7 +28,10 @@ public class HelloWordController {
         return "index";
     }
 
-    //生成
+    /**
+     * 获取验证码
+     * @return
+     */
     @RequestMapping("generateCaptcha")
     @ResponseBody
     public Map<String, String> generateCaptcha(){

@@ -2,7 +2,7 @@ package com.tiglle.ssc.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.tiglle.ssc.TiglleAuthenticationException;
-import com.tiglle.ssc.config_前后分离.TiglleJsonAuthenticationFailureHandler;
+import com.tiglle.ssc.handler.TiglleJsonAuthenticationFailureHandler;
 import com.tiglle.ssc.service.impl.TiglleUserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
