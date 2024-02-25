@@ -6,7 +6,13 @@ import com.tiglle.ssc.handler.TiglleJsonAuthenticationSuccessHandler;
 import com.tiglle.ssc.handler.TiglleJsonLogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,7 +22,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 //6.0之前是继承WebSecurityConfigurerAdapter来完成
 //前后分离，页面前端写，前端发送 PSOT /登录url登录
 //https://yunyanchengyu.blog.csdn.net/article/details/129824895
-@Configuration
+//@Configuration
 public class MyTiglleSpringSecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception{
@@ -61,7 +67,7 @@ public class MyTiglleSpringSecurityConfig {
         ;
 /***************************验证码****************************************************************/
         //配置验证码校验过滤器再UsernamePasswordAuthenticationFilter的前面
-        http.addFilterBefore(new CaptchaVerifyFilter(), UsernamePasswordAuthenticationFilter.class);
+        //http.addFilterBefore(new CaptchaVerifyFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -72,6 +78,13 @@ public class MyTiglleSpringSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationManager(UserDetailsService userDetailsService){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(new BCryptPasswordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        return daoAuthenticationProvider;
     }
 
 }

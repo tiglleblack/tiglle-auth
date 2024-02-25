@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
+//@Service
 public class TiglleUserDetailsServiceImpl implements UserDetailsService {
 
     //模拟redis缓存，存放验证码，实际上这个需要使用redis
     public static Map<String, String> captchaCache = new HashMap<String, String>();
 
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //模拟从数据库获取用户
         TiglleUserDetails tiglleUserDetails = userMappergetUserByName(username);
