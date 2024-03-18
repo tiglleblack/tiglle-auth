@@ -61,7 +61,7 @@ JSON 格式的，用来存放实际需要传递的数据，可自定义字段，
 
 ###### 3.Signature（签名）
 
-服务器通过 Payload、Header 和一个密钥(Secret)使用 Header 里面指定的签名算法生成Signature
+服务器通过 Payload、Header 和一个密钥(Secret)，使用 Header 里面指定的签名算法生成Signature
 
 签名的计算公式如下：
 

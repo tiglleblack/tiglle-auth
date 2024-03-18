@@ -11,6 +11,7 @@ import com.tiglle.ssc.entity.TiglleUserDetails;
 import com.tiglle.ssc.service.impl.TiglleUserDetailsServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;

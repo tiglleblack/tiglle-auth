@@ -10,4 +10,8 @@ public class TiglleAuthenticationException extends AuthenticationException {
     public TiglleAuthenticationException(String msg) {
         super(msg);
     }
+
+    public static void main(String[] args) {
+        
+    }
 }

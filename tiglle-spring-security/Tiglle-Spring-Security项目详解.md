@@ -281,11 +281,225 @@ https://yunyanchengyu.blog.csdn.net/article/details/130031402
 
 https://yunyanchengyu.blog.csdn.net/article/details/130076284
 
-#### 十五.
+###### 1.核心类：SecurityExpressionOperations
 
+表达式的计算根对象为
 
+###### 2.PreAuthorizeAuthorizationManager以及其执行流程
 
+处理@PreAuthorize("hasRole('ROLE_ADMIN')")注解
 
+###### 3.MethodBasedEvaluationContext
 
+评估上下文
 
+###### 4.SecurityExpressionHandler
+
+创建评估上下文
+
+#### 十五.自定义权限注解
+
+https://yunyanchengyu.blog.csdn.net/article/details/119543579
+
+上一章之后我们知道，表达式的计算根对象为SecurityExpressionOperations，评估上下文为MethodBasedEvaluationContext，创建评估上下文为SecurityExpressionHandler
+
+我们只需要自定义上面这几个实现类，就可以实现自定义表达式
+
+###### 1.创建表达式hasUser，规定指定用户可以访问资源
+
+1.创建跟对象：通过实现SecurityExpressionRoot类完成
+
+2.创建评估上下文：通过继承MethodSecurityEvaluationContext完成
+
+3.创建表达式处理器：通过继承DefaultMethodSecurityExpressionHandler实现，并注入Spring容器
+
+4.测试
+
+#### 十六.漏洞防护
+
+https://yunyanchengyu.blog.csdn.net/article/details/118676337
+
+###### 1.CSRF(Cross Site Request Forgery)跨站请求伪造
+
+1.CSRF案例
+
+###### 2.防止CSRF
+
+1.防止CSRF，需要确保请求中存在恶意网站无法提供的东西，Spring提供了两种机制来防止：
+
+①Synchronizer Token 同步令牌方式
+
+②通过Cookie的SameSite属性
+
+###### 3.同步令牌方式
+
+当用户登录成功生成一个随机令牌给浏览器，浏览器下次访问时携带此令牌。服务端检查如果没有令牌或者令牌不相等，拒接访问
+
+1.案列
+
+###### 4.cookie的Same Site属性
+
+1.大部分浏览器都支持为Cookie设置Same Site属性，值为：
+
+①.Strict：严格的，完全禁止第三方获取cookie，当前网站和请求目标一致时，才会携带
+
+②.Lax：：松散的，第三方发送请求方式是幂等的，才会携带
+
+③.None：没有限制
+
+2.案列
+
+①前后不分离，使用thymeleaf方式
+
+②前后分离，使用header方式
+
+#### 十七.漏洞防护源码解析
+
+https://yunyanchengyu.blog.csdn.net/article/details/130212289
+
+###### 1.相关的类介绍
+
+###### 2.请求过程源码解析
+
+#### 十八.异常处理机制源码
+
+https://yunyanchengyu.blog.csdn.net/article/details/119567690
+
+###### 1.认证异常顶级类
+
+AuthenticationException
+
+###### 2.授权异常顶级类
+
+AccessDeniedException
+
+3.请求异常流程
+
+#### 十九.OAuth2认证篇
+
+https://yunyanchengyu.blog.csdn.net/article/details/130227752  介绍
+
+Open Authorization（开放授权）简称，它是一种开放标准的授权协议，允许用户授权访问其在网站上受保护的资源。
+
+2007年, OAuth 1.0 版本发布, 但是过于复杂，漏洞较多，2012年，正式发布，因为其简单易用，迅速成为使用最广泛的版本，目前大多数的互联网产品，比如微信、支付宝、百度
+
+###### 1.授权模式
+
+①Authorization Code：授权码模式
+
+授权码模式是功能最完整、流程最严密的授权模式。
+
+1.第三方重定向到授权服务器，请求授权
+
+2.授权服务器弹出登录页面，用户登录后弹出授权页面，用户同意后颁发授权码给第三方
+
+3.第三方在后台服务器通过授权码获取token，通过token获取用户信息
+
+#### 二十.SpringSecurityOauth2
+
+https://yunyanchengyu.blog.csdn.net/article/details/130244749
+
+SpringSecurityOauth2支持OAuth2，默认集成了：Google、FaceBook、GitHub、Okta
+
+SSC使用Oauth2需要额外引入SpringSecurityOauth2依赖
+
+spring-security-oauth2-client是基于Oantu2.0基础的框架，已经停止维护
+
+       <!-- SSC依赖 -->
+       <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- SSC oauth2依赖 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
+        </dependency>
+
+###### 1.GitHub登录
+
+①去GiHub申请应用
+
+②填写回调地址等信息，Spring有默认重定向地址模板。填写好后会生成一些配置
+
+```
+// baseUrl：基础路径，例如IP+端口+Content-Path
+// registrationId：注册ID，Oauth服务商平台唯一标识符，可以根据该标识符找到对应平台的接口信息
+{baseUrl}/login/oauth2/code/{registrationId}
+```
+
+③项目中引入OAuth2依赖，并开启OAuth2登录的配置
+
+④配置文件中配置GitHub生存的一些配置信息，启动项目
+
+⑤等了页面会多出GitHub登录选项
+
+###### 2.Gitee登录
+
+①去GiHub申请应用
+
+②填写回调地址等信息，Spring有默认重定向地址模板。填写好后会生成一些配置
+
+③项目中引入OAuth2依赖，并开启OAuth2登录的配置
+
+④配置文件中配置Gitee生存的一些配置信息，因为SpringSSC默认不支持Gitee，所以配置相对比较多
+
+⑤启动项目，等了页面会多出GitHub登录选项
+
+#### 二十一.OAuth2认证源码解析
+
+https://yunyanchengyu.blog.csdn.net/article/details/130252465
+
+#### 二十二.使用第三方应用ID登录的功能
+
+新增用户表，新增用户和第三方ID绑定表，登录时去第三放授权然后获取第三方应用ID，如果根据ID能查询到绑定关系，直接登录。否则注册并添加绑定关系
+
+#### 二十三.Spring Authorization Server
+
+https://yunyanchengyu.blog.csdn.net/article/details/130306854 介绍和案例
+
+https://yunyanchengyu.blog.csdn.net/article/details/130374953 优化案例，使用数据库存储用户
+
+https://yunyanchengyu.blog.csdn.net/article/details/130407960 授权服务器篇之OAuth2AuthorizationService
+
+https://yunyanchengyu.blog.csdn.net/article/details/130416716 授权服务器篇之默认过滤器
+
+Spring Authorization Server相当于Oauth2中的微信，百度、Github、Gitee，只不过SSS只用来认证
+
+如果我们想把认证服务器单独搭建为一个项目，并且使用Oauth2.1的模式，那么Spring Authorization Server就 派上用场了
+
+ 	因为随着网络和设备的发展，原先的 OAuth 2.0 已经不能满足现今的需求了，对 OAuth 2.0 中的几种授权模式进行了取舍和优化，并增加一些新的特性， 于是推出了 OAuth 2.1，而 Spring Security OAuth 2.0 使用的是 OAuth 2.0 协议，为满足新的变化，Spring Security 团队重新写了一套叫 Spring Authorization Server 的认证授权框架来替换原先的 Spring Security OAuth 2.0。从官网中可以看到，原先的 Spring Security OAuth 2.0 已从 Spring Security 目录下被移除，接着是多出 Spring Authorization Server 作为单独目录。
+
+###### 1.案例
+
+OAuth 2.0 和2.1最大的区别就是删除了密码和简化模式。
+
+1.创建一个SpringBoot工程，引入Spring Authorization Server依赖
+
+```
+        <!--Spring 授权服务器-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-authorization-server</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+```
+
+2.添加配置类
+
+#### 二十四. spring-security-jwt
+
+https://yunyanchengyu.blog.csdn.net/article/details/130382675
+
+ spring-security-jwt是Spring Security OAuth下的一个子模块，所一也停止了维护，切勿使用
+
+取而代之的是spring-security-oauth2-jose
+
+```
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-oauth2-jose</artifactId>
+    </dependency>
+```
 
