@@ -7,6 +7,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="tiglle-jwt-auth" />
+        <module name="tiglle-jwt" />
+        <module name="tiglle-spring-security" />
       </profile>
     </annotationProcessing>
   </component>

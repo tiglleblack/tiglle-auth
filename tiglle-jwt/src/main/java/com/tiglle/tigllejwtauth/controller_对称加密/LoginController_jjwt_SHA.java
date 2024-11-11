@@ -68,6 +68,7 @@ public class LoginController_jjwt_SHA {
             Jws<Claims> claimsJws = Jwts
                     .parser()
                     .setSigningKey(secretKey)
+                    //认证jwt是否合法，再这里面进行
                     .parseClaimsJws(token);
             //获取Header信息
             JwsHeader header = claimsJws.getHeader();

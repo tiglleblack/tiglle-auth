@@ -111,6 +111,7 @@ public class LoginController_jjwt_RSA {
                     .parser()
                     //使用公钥解密
                     .setSigningKey(publicKey)
+                    //认证jwt石否合法，在这里面会进行
                     .parseClaimsJws(token);
             //获取Header信息
             JwsHeader header = claimsJws.getHeader();
