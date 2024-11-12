@@ -1,5 +1,7 @@
 # 这里只讲大概流程，具体请看SpringSecurity源码解析.md
 
+参考：https://blog.csdn.net/qq_43437874/category_12259144.html
+
 #### 一：初始项目
 
 ​    不添加spring-boot-starter-security的时候，访问控制器：http://localhost:8080/hello，可以随便访问

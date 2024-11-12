@@ -752,7 +752,7 @@ OK，此时SSC的默认用户信息已经放入缓存，key为username=admin
 
 默认SSC会对formLogin、httpBasic的认证方式进行认证，并且检查所有请求，再 三.SecurityFilterChain过滤链的初始化 的时候设置的
 
-我们可以自定义向容器中注入DefaultSecurityFilterChain来自定义配置，如：
+我们可以向容器中注入DefaultSecurityFilterChain来自定义配置，如：
 
 ```java
 //6.0之前是继承WebSecurityConfigurerAdapter来完成
@@ -764,6 +764,7 @@ public class TiglleSpringSecurityConfig {
                 //放行的资源，不用认证直接访问
                 .requestMatchers("/test").permitAll()
                 .requestMatchers("/test2").permitAll()
+            	//其他所有请求都认证
                 .anyRequest().authenticated();
         //开启表单认证
         FormLoginConfigurer<HttpSecurity> httpSecurityFormLoginConfigurer = httpSecurity.formLogin();
@@ -874,7 +875,7 @@ DaoAuthenticationProvider->UsernamePasswordAuthenticationToken
 
 AnonymousAuthenticationProvider->AnonymousAuthenticationToken
 
-②因此会调用DaoAuthenticationProvider.authenticate方法，从父类AbstractUserDetailsAuthenticationProvider继承的方法
+<span style="color: red;">②因此会调用DaoAuthenticationProvider.authenticate方法</span>，从父类AbstractUserDetailsAuthenticationProvider继承的方法
 
 ③最后返回处理过后的Authentication票据信息
 
@@ -967,7 +968,7 @@ AnonymousAuthenticationProvider->AnonymousAuthenticationToken
 
 ⑧校验成功返回检验成功的Authentication票据：还是UsernamePasswordAuthenticationToken，AbstractAuthenticationToken.authenticated=true
 
-###### 4.来看看第⑤步：DaoAuthenticationProvider.additionalAuthenticationChecks
+###### 4.来看看第⑤步：<span style="color: red;">DaoAuthenticationProvider.additionalAuthenticationChecks(比较密码)</span>
 
 ```
 	@Override

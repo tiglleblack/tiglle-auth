@@ -5,8 +5,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="083f5354-e283-431e-be44-81003dc95ef6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tiglle-spring-security/SpringSecurity源码解析.md" beforeDir="false" afterPath="$PROJECT_DIR$/tiglle-spring-security/SpringSecurity源码解析.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tiglle-spring-security/Tiglle-Spring-Security项目详解.md" beforeDir="false" afterPath="$PROJECT_DIR$/tiglle-spring-security/Tiglle-Spring-Security项目详解.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/OAuth2.0最简向导.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/delegatingfilterproxy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/filterchain.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/filterchainproxy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20230410140908841.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20230421184645177.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20230510154255157.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20230510163101376.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20230510165314829.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231130152247055.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231130152345471.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231204230216259.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231205164049257.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231206022701725.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231206023030864.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231209011827867.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231220180422742.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231220185958063.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231220190152888.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231221000906168.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222124053994.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222131118611.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222131233025.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222152557861.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222152734546.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222203153125.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222203218334.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222203240921.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231222203259785.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231223020052999.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231223164128030.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/image-20231223203225688.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/multi-securityfilterchain-17016804731631.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/securitycontextholder.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/securityfilterchain.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/assets/usernamepasswordauthenticationfilter-16822329079281.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/尚硅谷/SpringSecurity/笔记.md" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,24 +54,24 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "tiglleblack"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;tiglleblack&quot;
   }
-}]]></component>
+}</component>
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
   </component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/tiglleblack/tiglle-auth.git",
-    "accountId": "c20f42ea-06d9-45f2-bb33-5dd01cda3847"
+    "accountId": "dd236f86-eb12-4f18-bdc9-3519e0669c79"
   }
 }]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2oYnEamuFJH5tKoM4avqAd8PFwp" />
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
@@ -43,7 +81,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Workspace/IDEAWorkspace/Tiglle/tiglle-auth",
+    "last_opened_file_path": "C:/Users/tiglle/Desktop/Tiglle/git/tiglle-auth",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -69,6 +107,7 @@
       <option name="presentableId" value="Default" />
       <updated>1731055266367</updated>
       <workItem from="1731055268526" duration="3276000" />
+      <workItem from="1731417214576" duration="1729000" />
     </task>
     <servers />
   </component>
